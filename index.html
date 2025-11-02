@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RAI-Rev • Surgical Pause</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root {
+  --bg: #0b0b0f;
+  --card: #14141a;
+  --text: #eaeaf2;
+  --muted: #9aa0a6;
+  --accent: #4da3ff;
+  --ok: #3ecf8e;
+  --warn: #ffb020;
+  --danger: #ff5470;
+  --radius: 16px;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.35;
+}
+.header { position: sticky; top: 0; z-index: 10; background: linear-gradient(180deg, rgba(11,11,15,0.95), rgba(11,11,15,0.85), transparent); padding: env(safe-area-inset-top) 16px 8px 16px; backdrop-filter: blur(6px); }
+.hstack { display: flex; align-items: center; gap: 12px; }
+.spacer { flex: 1; }
+.badge { padding: 2px 8px; border-radius: 999px; font-size: 12px; border: 1px solid #333; color: var(--muted); }
+button, select, input, textarea { font: inherit; color: var(--text); background: var(--card); border: 1px solid #2a2a34; border-radius: var(--radius); padding: 10px; width: 100%; }
+button { cursor: pointer; }
+button.primary { background: linear-gradient(180deg, #2563eb, #1d4ed8); border: none; color: white; }
+button.ghost { background: transparent; border: 1px solid #2a2a34; }
+.card { background: var(--card); border: 1px solid #1d1d25; border-radius: var(--radius); padding: 16px; margin: 12px 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+.label { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.section-title { font-weight: 700; margin: 6px 16px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-size: 12px; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.row { display: grid; grid-template-columns: 1fr; gap: 8px; }
+@media (min-width: 640px) { .grid.two { grid-template-columns: 1fr 1fr; } }
+.score-big { font-size: 48px; font-weight: 800; letter-spacing: -0.02em; }
+.tier { font-weight: 700; }
+.tier.robust { color: var(--ok); }
+.tier.normal { color: #8ddfff; }
+.tier.frail { color: var(--warn); }
+.tier.veryfrail { color: var(--danger); }
+.small { font-size: 12px; color: var(--muted); }
+footer { height: 24px; }
+kbd { background:#111; border:1px solid #333; border-radius:6px; padding:2px 6px; }
+</style>
+</head>
+<body>
+<header class="header hstack">
+  <div class="hstack">
+    <strong>RAI-Rev • Surgical Pause</strong>
+    <span id="installBadge" class="badge" hidden>Install</span>
+  </div>
+  <div class="spacer"></div>
+  <button id="aboutBtn" class="ghost" aria-label="About">About</button>
+</header>
+
+<section class="card hstack" style="align-items: flex-end; gap:16px;">
+  <div>
+    <div class="small">Total RAI-Rev</div>
+    <div class="score-big" id="score">0</div>
+  </div>
+  <div class="spacer"></div>
+  <div>
+    <div class="small">Tier</div>
+    <div id="tier" class="tier robust">Robust</div>
+  </div>
+</section>
+
+<div class="section-title">14-item RAI-Rev</div>
+<section class="card">
+  <div class="grid">
+
+    <div class="row"><div class="label">Age</div>
+      <select id="age">
+        <option value="0">&lt; 60</option>
+        <option value="6">60–69</option>
+        <option value="9">70–79</option>
+        <option value="13">80–89</option>
+        <option value="15">≥ 90</option>
+      </select>
+    </div>
+
+    <div class="row"><div class="label">Biological Sex</div>
+      <select id="sex">
+        <option value="0">Female</option>
+        <option value="6">Male</option>
+      </select>
+    </div>
+
+    <div class="row"><div class="label">Active Cancer</div>
+      <select id="cancer">
+        <option value="0">No / Remission</option>
+        <option value="8">Active</option>
+      </select>
+    </div>
+
+    <div class="row"><div class="label">Unintentional Weight Loss (≥10 lb / 3 mo)</div>
+      <select id="weightloss">
+        <option value="0">No</option>
+        <option value="9">Yes</option>
+      </select>
+    </div>
+
+    <div class="row"><div class="label">Poor Appetite / Anorexia</div>
+      <select id="appetite">
+        <option value="0">No</option>
+        <option value="6">Yes</option>
+      </select>
+    </div>
+
+    <div class="row"><div class="label">Congestive Heart Failure</div>
+      <select id="chf">
+        <option value="0">No</option>
+        <option value="7">Yes</option>
+      </select>
+    </div>
+
+    <div class="row"><div class="label">Dyspnea at Rest</div>
+      <select id="sob">
+        <option value="0">No</option>
+        <option value="9">Yes</option>
+      </select>
+    </div>
+
+    <div class="row"><div class="label">Renal Failure</div>
+      <select id="renal">
+        <option value="0">No</option>
+        <option value="10">Yes</option>
+      </select>
+    </div>
+
+    <div class="row"><div class="label">Functional Status (ADLs)</div>
+      <select id="adl">
+        <option value="0">Independent</option>
+        <option value="5">Some help</option>
+        <option value="10">Dependent</option>
+      </select>
+    </div>
+
+    <div class="row"><div class="label">Cognitive Impairment</div>
+      <select id="cog">
+        <option value="0">No</option>
+        <option value="10">Yes</option>
+      </select>
+    </div>
+
+    <div class="row"><div class="label">Living Situation</div>
+      <select id="living">
+        <option value="0">Home / Independent</option>
+        <option value="7">Facility</option>
+      </select>
+    </div>
+
+    <div class="row"><div class="label">BMI &lt; 18.5</div>
+      <select id="bmi">
+        <option value="0">No</option>
+        <option value="5">Yes</option>
+      </select>
+    </div>
+
+    <div class="row"><div class="label">Diabetes (Insulin-dependent)</div>
+      <select id="dm">
+        <option value="0">No / Diet / Oral meds</option>
+        <option value="6">Insulin-dependent</option>
+      </select>
+    </div>
+
+    <div class="row"><div class="label">Hospitalization/Surgery in Last 6 Months</div>
+      <select id="recenthosp">
+        <option value="0">No</option>
+        <option value="5">Yes</option>
+      </select>
+    </div>
+
+  </div>
+
+  <div style="height:8px;"></div>
+  <div class="hstack" style="gap:8px;">
+    <button class="primary" id="copyNoteBtn">Copy Pause Note</button>
+    <button class="ghost" id="resetBtn">Reset</button>
+  </div>
+  <div class="small" style="margin-top:8px;">
+    Fixed scoring per RAI-Rev literature. Thresholds: Robust ≤20 • Normal 21–29 • Frail 30–39 • Very Frail ≥40.
+  </div>
+</section>
+
+<div class="section-title">Surgical Pause</div>
+<section class="card">
+  <label><input type="checkbox" id="chk1"> Indication & alternatives re-checked</label><br>
+  <label><input type="checkbox" id="chk2"> Goals-of-care aligned; shared decision documented</label><br>
+  <label><input type="checkbox" id="chk3"> Prehab/optimization (nutrition / PT / anemia / meds)</label><br>
+  <label><input type="checkbox" id="chk4"> Periop plan updated (ICU readiness, DNR discussion)</label><br>
+  <label><input type="checkbox" id="chk5"> Patient/family informed of frailty risk</label>
+</section>
+
+<section class="card small">
+  <div><strong>Disclaimer.</strong> Educational tool. Confirm scoring/thresholds with your institutional policy. Does not replace clinical judgment.</div>
+</section>
+
+<footer></footer>
+
+<!-- About Modal -->
+<dialog id="about">
+  <div class="card" style="margin:0;">
+    <h3>About</h3>
+    <p>Rapid frailty screening with 14-item RAI-Rev and a brief Surgical Pause checklist. Offline-first; no data leaves your device.</p>
+    <div class="hstack" style="gap:8px; margin-top:8px;">
+      <button id="closeAbout" class="primary">Close</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+// Fixed thresholds
+const THR = { robustMax: 20, normalMax: 29, frailMax: 39 };
+// Field ids
+const fields = ['age','sex','cancer','weightloss','appetite','chf','sob','renal','adl','cog','living','bmi','dm','recenthosp'];
+
+function currentScore() {
+  return fields.reduce((sum, id) => sum + parseInt(document.getElementById(id).value||'0',10), 0);
+}
+function tierFromScore(s) {
+  if (s <= THR.robustMax) return 'Robust';
+  if (s <= THR.normalMax) return 'Normal';
+  if (s <= THR.frailMax) return 'Frail';
+  return 'Very Frail';
+}
+function updateUI() {
+  const s = currentScore();
+  document.getElementById('score').textContent = s;
+  const t = tierFromScore(s);
+  const el = document.getElementById('tier');
+  el.textContent = t;
+  el.className = 'tier ' + (t==='Robust'?'robust':t==='Normal'?'normal':t==='Frail'?'frail':'veryfrail');
+  // Auto-check pause if Frail or Very Frail
+  const auto = (t === 'Frail' || t === 'Very Frail');
+  for (let i=1;i<=5;i++) {
+    const c = document.getElementById('chk'+i);
+    if (auto && !c.dataset.userToggled) c.checked = true;
+  }
+}
+fields.forEach(f => document.getElementById(f).addEventListener('change', updateUI));
+for (let i=1;i<=5;i++) {
+  const c = document.getElementById('chk'+i);
+  c.addEventListener('change', () => { c.dataset.userToggled = '1'; });
+}
+document.getElementById('resetBtn').addEventListener('click', () => {
+  fields.forEach(f => document.getElementById(f).selectedIndex = 0);
+  for (let i=1;i<=5;i++) {
+    const c = document.getElementById('chk'+i);
+    c.checked = false; delete c.dataset.userToggled;
+  }
+  updateUI();
+});
+document.getElementById('copyNoteBtn').addEventListener('click', async () => {
+  const s = currentScore();
+  const tier = tierFromScore(s);
+  const checks = [];
+  for (let i=1;i<=5;i++) if (document.getElementById('chk'+i).checked) checks.push(i);
+  const note = `Frailty screen: RAI-Rev ${s} (${tier}). Surgical Pause: ${checks.length}/5 items checked.
+• Indication/alternatives
+• Goals-of-care + shared decision
+• Prehab/optimization
+• Periop plan update
+• Patient/family communication`;
+  try { await navigator.clipboard.writeText(note); alert('Note copied to clipboard.'); }
+  catch(e) { prompt('Copy note:', note); }
+});
+// About modal
+const about = document.getElementById('about');
+document.getElementById('aboutBtn').addEventListener('click', () => about.showModal());
+document.getElementById('closeAbout').addEventListener('click', () => about.close());
+
+// Service worker (in-memory string => blob => register)
+if ('serviceWorker' in navigator) {
+  const sw = `
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open('rai-rev-v1').then(c=>c.addAll(['./','./index.html','./manifest.json','./icon.png'])));
+      self.skipWaiting();
+    });
+    self.addEventListener('activate', e => self.clients.claim());
+    self.addEventListener('fetch', e => {
+      e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+    });
+  `;
+  const blob = new Blob([sw], {type:'text/javascript'});
+  const url = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url);
+}
+// Initial render
+updateUI();
+</script>
+</body>
+</html>
